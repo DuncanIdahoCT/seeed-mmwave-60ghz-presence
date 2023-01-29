@@ -24,3 +24,30 @@ This is what it looks like at the moment but it works 100%:
 
 # Integrating into Home Assistant
 
+This is where MQTT and a custom sensor entry in the YAML comes in. I'm sure there are better ways to do this but the way I researched was to make an entry in the configuration.yaml:
+
+```
+  # Example configuration.yaml entry
+  mqtt:
+    sensor:
+      - name: "mmwave-bedroom-60ghz-presence"
+        state_topic: "mmwave/bedroom"
+        unique_id: [use a GUID generator for this]
+```
+
+And of course using Arduino IDE you'll need to flash the code from the seed-mmwave-60ghz-presence.ino file on this repo
+
+You may also need to add packages in Arduino IDE for these includes to work:
+```
+  #include <ArduinoMqttClient.h>
+  #include <WiFi.h>
+```
+Note: if you're not using an ESP32 of some type, you'll need to change this ifdef statement:
+
+```
+  #ifdef ESP32
+	  #define RXD2 23
+	  #define TXD2 5
+  #endif
+```
+The code should of course be fully reviewed before use, all passwords and IPs/Hostnames are cleared out and ssid and wifi passwords should probably be in a secrets file but I was being lazy and this is just a sandbox project... I still need to work out how to send settings to the Seeed 60Ghz sensor to reduce it's range as right now it shoots right through the wall and picks up motion in the hallway.
