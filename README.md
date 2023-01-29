@@ -52,3 +52,7 @@ Note: if you're not using an ESP32 of some type, you'll need to change this ifde
   #endif
 ```
 The code should of course be fully reviewed before use, all passwords and IPs/Hostnames are cleared out and ssid and wifi passwords should probably be in a secrets file but I was being lazy and this is just a sandbox project... I still need to work out how to send settings to the Seeed 60Ghz sensor to reduce it's range as right now it shoots right through the wall and picks up motion in the hallway.
+
+When you compile/upload the code to your Arduino of choice or an ESP32 like I did, there is a lot of extra debug message action that I've setup so you can see how it's working. Tune your Arduino IDE Serial Monitor to 115200 baud to see this, if you're quick about it after it is done uploading and the Arduino/ESP is rebooting, you'll see the initial WiFi join and then the start up and connection status of the MQTT sender(client)
+
+That's about all for now. If I enhance this further or build an actual case for it, i'll update this project.
