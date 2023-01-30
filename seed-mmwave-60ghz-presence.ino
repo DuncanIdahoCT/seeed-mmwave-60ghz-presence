@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include <ArduinoMqttClient.h>
 #include <WiFi.h>
 
@@ -54,6 +55,7 @@ class FallDetection_60GHz{
 
 #endif
 
+// If you're not using an ESP32 with Arduino as I am for this project, you'll need to change the #ifdef or break out these definitions from inside the #ifdef
 #ifdef ESP32
 	#define RXD2 23
 	#define TXD2 5
@@ -61,12 +63,12 @@ class FallDetection_60GHz{
 
 // WiFi parameters
 #define WLAN_SSID       "your_ssid"
-#define WLAN_PASS       "your_password"
+#define WLAN_PASS       "your_wifi_password"
 
 // MQTT vars
-const char broker[] = "your_mqtt_host";
+const char broker[] = "xxx.xxx.xxx.xxx";
 int        port     = 1883;
-const char topic[]  = "mmwave/bedroom";
+const char topic[]  = "homeassistant/sensor/seed-mmwave_status/state";
 
 WiFiClient wifiClient;
 MqttClient mqttClient(wifiClient);
@@ -95,12 +97,12 @@ void setup() {
   Serial.println(F("IP address: "));
   Serial.println(WiFi.localIP());
 
-  // You can provide a unique client ID, if not set the library uses Arduino-millis()
-  // Each client must have a unique client ID
-  mqttClient.setId("mmwave-bedroom-60ghz-presence");
+  // I'm not sure if this is requied but I set a unique client ID while debugging MQTT authentication:
+  mqttClient.setId("seed-mmwave");
 
-  // You can provide a username and password for authentication
-  mqttClient.setUsernamePassword("your_mqtt_username", "your_mqtt_password");
+  // Despite the Mosquito docs, I was not able to use my Home Assistant username and password here, the host tosses up some invalid key error.
+  // However, there was one I used, that I can't even recall how it was generated, for another MQTT client solution which has a long key instead of an HA password
+  mqttClient.setUsernamePassword("mqtt_username", "mqtt_password_key");
   MQTT_connect();
   // fire up the radar!
   radar.SerialInit();
@@ -122,6 +124,11 @@ void loop() {
   }
 }
 
+// This void function establishes the Serial connection with the Seeed mmWave Radar module
+// It's important to note that on an ESP32, you should use Serial2
+// Serial is used for USB COM Port and Serial1 is somehow reserved but I forget why
+// Just use Serial2 and move on with your life :) I stumbled on this one for quite some time...
+// Trying to use SoftwareSerial and then HardwareSerial... it was all unnecessary, Serial2 was always there for the asking
 void FallDetection_60GHz::SerialInit(){
   Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
   Serial.println("mmWave Serial Txd is on pin: "+String(TXD2));
@@ -249,6 +256,8 @@ void FallDetection_60GHz::Situation_judgment(byte inf[]){
       break;
   }
 
+    // It's a bit messy, but this is where the actual MQTT messages, which are defined above as (payload) are sent to the MQTT host
+    // I plan to break these out into their proper binary_sensors leaving only the top level status being sent to the base topic
     Serial.print("Sending message to topic: ");
     Serial.println(topic);
     Serial.println(payload);
@@ -320,13 +329,18 @@ void FallDetection_60GHz::Fall_Detection(byte inf[]){
           break;
       }
       break;
+
+    // Even though this is the "Fall Detection" radar module, I'm not using, nor have I seen, any of these messages
+    // Some things aren't yet implimented if you read the Seeed documentation but honestly I problably won't use this anyway
+    // For this reason, I don't have any MQTT topic or state related code here
+		  
   }
 }
 
-// Function to connect and reconnect as necessary to the MQTT server.
-// Should be called in the loop function and it will take care if connecting.
-void MQTT_connect() {
+// This function connects or reconnects the MQTT client, I found this solution better than doing an endless polling loop
+// And I'm sure it's much easier on the CPU of the poor ESP32 I'm using :)
 
+void MQTT_connect() {
   if (mqttClient.connected()) {
     return;
   }
@@ -339,4 +353,67 @@ void MQTT_connect() {
   }
   Serial.println("You're connected to the MQTT broker!");
   Serial.println();
+  
+  // MQTT Discovery Testing, this will create a base device under MQTT Intergration with 1 sensor and 2 binary_sensors
+  // I'm using the sensor state for all "unhandled" messages from the Seeed 60Ghz radar for now
+  // The plan is to separate out the presence detection messages from the motion and send them to the two binary_sensors
+  
+  DynamicJsonDocument config(512);
+  config["name"] = "Status";
+  config["object_id"] = "seed-mmwave_status";
+  config["unique_id"] = "your_unique_id_here... I used a GUID";
+  config["state_topic"] = "homeassistant/sensor/seed-mmwave_status/state";
+  JsonObject device  = config.createNestedObject("device");
+  device["identifiers"] = "Custom";
+  device["name"] = "Seeed mmWave";
+  device["model"] = "CS101";
+  device["manufacturer"] = "Custom";
+  device["sw_version"] = "1.0";
+
+  serializeJsonPretty(config, Serial);
+
+  mqttClient.beginMessage("homeassistant/sensor/seed-mmwave_status/config", (unsigned long)measureJson(config));
+  serializeJson(config, mqttClient);
+  mqttClient.endMessage();
+
+  DynamicJsonDocument config1(512);
+  config1["device_class"] = "Occupancy";
+  config1["name"] = "Presence";
+  config1["object_id"] = "seed-mmwave_presence";
+  config1["unique_id"] = "your_unique_id_here... I used a GUID";
+  config1["state_topic"] = "homeassistant/binary_sensor/seed-mmwave_presence/state";
+  JsonObject device1  = config1.createNestedObject("device");
+  device1["identifiers"] = "Custom";
+  device1["name"] = "Seeed mmWave";
+  device1["model"] = "CS101";
+  device1["manufacturer"] = "Custom";
+  device1["sw_version"] = "1.0";
+
+  serializeJsonPretty(config1, Serial);
+
+  mqttClient.beginMessage("homeassistant/binary_sensor/seed-mmwave_presence/config", (unsigned long)measureJson(config1));
+  serializeJson(config1, mqttClient);
+  mqttClient.endMessage();
+
+  DynamicJsonDocument config2(512);
+  config2["device_class"] = "motion";
+  config2["name"] = "Movement";
+  config2["object_id"] = "seed-mmwave_movement";
+  config2["unique_id"] = "your_unique_id_here... I used a GUID";
+  config2["state_topic"] = "homeassistant/binary_sensor/seed-mmwave_movement/state";
+  JsonObject device2  = config2.createNestedObject("device");
+  device2["identifiers"] = "Custom";
+  device2["name"] = "Seeed mmWave";
+  device2["model"] = "CS101";
+  device2["manufacturer"] = "Custom";
+  device2["sw_version"] = "1.0";
+
+  serializeJsonPretty(config2, Serial);
+
+  mqttClient.beginMessage("homeassistant/binary_sensor/seed-mmwave_movement/config", (unsigned long)measureJson(config2));
+  serializeJson(config2, mqttClient);
+  mqttClient.endMessage();
+
+  // I'm not entirely sure how the above triple json docs effect memory on the Arduino(ESP32 in my case) but this does work for now.
+  // As is my MO with code I tinker with, this just has to be a far more repetitive way of doing things than is necessary... but I have other priorities!
 }
