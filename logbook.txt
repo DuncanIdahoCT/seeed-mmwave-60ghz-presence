@@ -82,6 +82,13 @@ Status changed to Radar detects None. <<-- this one is part of the MOVE_INF judg
 4:16:01 PM - 6 minutes ago
 
 // Basically the above is just two different evaluators both saying... we got nothin'
+// I'm only using in motion and stationary for now as the movement binary_sensor payloads
+// I may change this but for now, I can't see a reason to report "none" which is the 3rd judgement status the sensor puts out as part of MOVE_INF
+// Yes, technically "stationary" is in reference to a person being detected but not in motion but really we have that already
+// Splitting the messages from the main situation_judgement void function into the presence and movement bianary sensors means we know if:
+//   a) someone is "there"
+//   b) if they are moving or not
+// This would seem to cover it, there is no reason to have 3 states per sensor, if both sensors are clear, it's the same thing as "no one+none"
 Status changed to Radar detects no one.
 4:17:35 PM - 4 minutes ago
 
