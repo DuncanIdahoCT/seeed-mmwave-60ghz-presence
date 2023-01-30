@@ -1,5 +1,5 @@
-# seed-mmwave-60ghz-presence
-A working MQTT based Home Assistant Integration using the Seed Studio MR60FDA1
+# seeed-mmwave-60ghz-presence
+A working MQTT based Home Assistant Integration using the Seeed Studio MR60FDA1
 
 ![Arduino IDE](/static/images/Arduino%20IDE.png)
 
