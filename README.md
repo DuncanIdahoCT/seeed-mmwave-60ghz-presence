@@ -3,9 +3,11 @@ A working MQTT based Home Assistant Integration using the Seed Studio MR60FDA1
 
 ![Arduino IDE](/static/images/Arduino%20IDE.png)
 
-This project is a bit of a work in progress but I have it up and running and the sensor state is now stable and reliable in Home Assistant:
+I've updated the code, using MQTT Discovery, so that it will create an actual device with multiple sensors/binary_sensors that will eventually show the various states that are tracked by this sensor:
 
-![Home Assistant Sensor Entity](/static/images/home%20assistant%20sensor%20entity.png)
+![Proper Sensor dDevice... almost](/static/images/proper%20sensor%20device...%20almost.png)
+
+This has a dependancy on ArduinoJson so you may need to add that library...
 
 # Why MQTT?
 
@@ -25,8 +27,9 @@ This is what it looks like at the moment, but it works 100%:
 
 # Integrating into Home Assistant
 
-This is where MQTT and a custom sensor entry in the YAML comes in. I'm sure there are better ways to do this but the way I researched was to make an entry in the configuration.yaml:
+Once you flash the device, and ensuring you have an MQTT broker setup in HA, you only need to turn it on and connect to your WiFi, it will send configuration topic messages to MQTT in a format that are recognized as MQTT Discovery which will create the device and populate it with sensors and with any luck, you'll see state messages
 
+This is no longer necessary, if done already, it should be removed and HA restarted or the sensors config reloaded from Development Tools:
 ```
   # Example configuration.yaml entry
   mqtt:
@@ -40,6 +43,7 @@ And of course using Arduino IDE you'll need to flash the code from the seed-mmwa
 
 You may also need to add packages in Arduino IDE for these includes to work:
 ```
+  #include <ArduinoJson.h>
   #include <ArduinoMqttClient.h>
   #include <WiFi.h>
 ```
