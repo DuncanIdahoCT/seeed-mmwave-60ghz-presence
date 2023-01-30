@@ -11,13 +11,14 @@ This has a dependancy on ArduinoJson so you may need to add that library...
 
 # Why MQTT?
 
-At first I thought to use the sensor with an extra ESP32 I had laying around but as much as I tried to tinker with it, I could not make it work using ESPHome. However, there is an "okay" example code set for Arduino IDE... a sample sketch... referenced on the Seeed Studio Wiki:
+At first I thought to use the sensor with an extra ESP32 I had laying around but as much as I tried to tinker with it, I could not make it work using ESPHome. However, there is an example code set for Arduino IDE... a sample sketch... referenced on the Seeed Studio Wiki:
 
 https://wiki.seeedstudio.com/Radar_MR60FDA1/
 
 https://github.com/limengdu/Seeed-Studio-MR60FDA1-Sersor
+						    ^ <--not a typo, there is a misspelling in the repo name, but hey, I misspelled Seeed when I first wrote this ;)
 
-Their code is a bit odd... but it hinted at things and I managed to figure out how to use an ESP32 in Arduino IDE and then worked out that Serial 2 is what I want, not SoftwareSerial as many other threads suggested... the ESP32 has 3 actual hardware serial ports but only Serial 2 is "readily" usable from what I understood. As soon as I modified the code to use Serial 2 and set the pins to my preference the sensor started outputting data to the Arduino IDE serial monitor.
+Their code is a bit hard for me to follow, but it hinted at things and I managed to figure out how to use an ESP32 in Arduino IDE and then worked out that Serial 2 is what I want, not SoftwareSerial as many other threads suggested... the ESP32 has 3 actual hardware serial ports but only Serial 2 is "readily" usable from what I understood. As soon as I modified the code to use Serial 2 and set the pins to my preference the sensor started outputting data to the Arduino IDE serial monitor.
 
 I then added code examples for WiFi and MQTT so I could send sensor data to Home Assistant the only way I knew would work given that I could not manage to get the code to work in ESPHome.
 
