@@ -63,34 +63,74 @@ Stationary Presence:
 
 ![Working Sensor in Action](/static/images/presence+stationary.png)
 
+There are several other things I want to look at and perhaps even need to figure out how to manage such as sending distance and other (supported) settings to the Seeed MR60FDA1 module, but for now at least, it can be used for testing, even practical automation testing and I'm very curious to see how well it detects humans as opposed to small animals or moving objects which is an issue with other mmWave sensors I've used.
+
 The code is far from clean at the moment, I also flattened it completely-making it all in one .ino compared to the source example code on the Seeed Wiki... just for simplicity sake... while I'm experimenting.
 
 The only thing worse looking than my code, is the actual project board:
 
 ![Project Breadboard](/static/images/Seeed%2060Ghz%20mmWave%20-%20ESP32.jpg)
 
-# Integrating into Home Assistant
+#Full setup
 
-Once you flash the device, and ensuring you have an MQTT broker setup in HA, you only need to turn it on and connect to your WiFi, it will send configuration topic messages to MQTT in a format that are recognized as MQTT Discovery which will create the device and populate it with sensors and with any luck, you'll see state messages
+I used a random PC cable that happned to have the right size header connection for the back of the MR60FDA1 module and then basically just spliced on some breadboard jumper wire ends so I had the push-in jumper ends basically. Then on my particular MCU which is a Wemos D1 Mini ESP32, I chose to use pins 23,5 for RX,TX of Serail2. Not much else to do here, the MR60FDA1 only needs VCC, GND, RX, and TX. There is no pull-down pin since it's not a simple binary-sensor and there is no separate UART bus either since it already has both RX/TX you just send bytes back if you need to for changing settings, I have not worked that out yet.
 
-This is no longer necessary, if done already, it should be removed and HA restarted or the sensors config reloaded from Development Tools:
-```
-  # Example configuration.yaml entry
-  mqtt:
-    sensor:
-      - name: "mmwave-bedroom-60ghz-presence"
-        state_topic: "mmwave/bedroom"
-        unique_id: [use a GUID generator for this]
-```
+Using the Arduino IDE, you can load up the seed-mmwave-60ghz-presence.ino sketch from the repo here, ensuring you have the base prerequisites met such as:
 
-And of course using Arduino IDE you'll need to flash the code from the seed-mmwave-60ghz-presence.ino file on this repo
-
-You may also need to add packages in Arduino IDE for these includes to work:
 ```
   #include <ArduinoJson.h>
   #include <ArduinoMqttClient.h>
   #include <WiFi.h>
 ```
+
+And flash to your chosen MCU, of course you may need to adjust the pins you're using, but after you flash it, you should start seeing messages in the serial monitor of the Arduino IDE. Be sure to set it to 115200 BAUD.
+
+Provided you have setup the WiFi, MQTT, and all related credentials and keys, as noted in the code... you should be ready for the next step... or it may already be ready already ;)
+
+# Integrating into Home Assistant
+
+Integration is actually pretty easy now with MQTT Discovery. Once your device is flashed, if you got all the settings right the first time-and don't we all!? ;) you may already see the device in Home Assistant due to the magic of MQTT Discovery and perhaps even state messages and presence and movement statuses.
+
+# Issues? Don't See Your Device in HA??
+
+Be sure to first confirm you see Serial Monitor status messages for motion and MQTT connection and of course WiFi success... all ar logged to Serial Monitor for debugging purposes for now. The easiest way to catch the initial bootup is to clear the serial monitor and de-power/re-power the device while on that tab. You'll see it boot and connect to wifi and mqtt:
+
+```
+...
+WiFi connected
+IP address: 
+xxx.xxx.xxx.xxx
+Attempting to connect to the MQTT broker: xxx.xxx.xxx.xxx
+You're connected to the MQTT broker!
+
+*you'll see a lot of json like the below too:*
+
+{
+  "device_class": "Occupancy",
+  "name": "Presence",
+  "object_id": "seed-mmwave_presence",
+  "unique_id": "your_guid",
+  "state_topic": "homeassistant/binary_sensor/seed-mmwave_presence/state",
+  "payload_on": "on",
+  "payload_off": "off",
+  "device": {
+    "identifiers": "Custom",
+    "name": "Seeed mmWave",
+    "model": "CS101",
+    "manufacturer": "Custom",
+    "sw_version": "1.0"
+  }
+}
+
+mmWave Serial Txd is on pin: 5
+mmWave Serial Rxd is on pin: 23
+mmWave Serial Ready
+```
+
+If all looks well in the Serial Monitor but you still don't see the device in HA, try enabling MQTT debug logging, de/re-power the device again, wait maybe 10 seconds then disable debug logging and look through the downloaded file, this should happen as soon as you hit disable debug in MQTT devices & integrations.
+
+You'll see or should see something about MQTT Discovery in the debug output, look for discovery parse errors.
+
 Note: if you're not using an ESP32 of some type, you'll need to change this ifdef statement:
 
 ```
