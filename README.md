@@ -175,4 +175,11 @@ https://github.com/limengdu/Seeed-Studio-MR60FDA1-Sersor
 
 Their code is a bit hard for me to follow, but it hinted at things and I managed to figure out how to use an ESP32 in Arduino IDE and then worked out that Serial 2 is what I want, not SoftwareSerial as many other threads suggested... the ESP32 has 3 actual hardware serial ports but only Serial 2 is "readily" usable from what I understood. As soon as I modified the code to use Serial 2 and set the pins to my preference the sensor started outputting data to the Arduino IDE serial monitor.
 
-I expect to continue making refinements to this project, I'll likely release them and archive the current working-test version as I go.
+# Issues / Things to Do:
+
+  1) Work out a better way to set or reset initial states at power on
+  2) Once the code can support sending the bytes to the sensor for setting changes such as distance, look into using MQTT command topics to make this possible from the Home Assistant device
+  3) Build a case? maybe I'm getting ahead of myself here :) but it would make it easier to hide it in the bedroom for real testing and to see if the cat sets it off as much as the DFRobot 24Ghz mmWave
+  4) Code cleansing and deduplication; I got really lazy as I started to see real progress and the project came to life
+
+I sat on a small number of these Seeed 60gHz Fall Detection modules for quite some time after initially ordering them with excitement and then realizing I had no idea how to make them work in ESPHome. Once I realized I could use MQTT, this progressed right along so I expect to continue making refinements to this project, I'll likely release them and archive the current working-test version as I go.
