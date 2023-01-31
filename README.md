@@ -17,6 +17,10 @@ Then, and with some helpful tips from Matt over in the HA community forums: http
 
 ![An Almost Working HA Device...](/static/images/proper%20sensor%20device...%20almost.png)
 
+There was a bit of a learning curve for me as this was the first time working with dynamic json documents and the nested objects gave me some grief and kept getting shorted when sent to MQTT as discovery messages but eventually I managed to make it work enough to get a proper device created with sensors and start testing the state messages:
+
+![Custom Home Assistant Device](/static/images/custom%20device.png)
+
 
 
 The code is far from clean at the moment, I also flattened it completely from the source example code on the Seeed Wiki just for simplicity sake while I'm experimenting. And the actual hardware is even uglier than my code, but it works 100%:
