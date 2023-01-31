@@ -15,13 +15,22 @@ I started out just being able to see the sensor messages in Arduino IDE, and I o
 
 ![Arduino IDE](/static/images/Arduino%20IDE.png)
 
-Next I decided to try to get a basic sensor entity working in Home Assistant using manual configuration.yaml sensor settings with a state topic I could update using messages from the sensor example code:
+Next I decided managed to get a basic sensor entity working in Home Assistant using manual configuration.yaml sensor settings with a state topic I could update using messages from the sensor example code:
 
 ![Basic Sensor Entity](/static/images/home%20assistant%20sensor%20entity.png)
 
+Then, and with some helpful tips from Matt over in the HA community forums: https://community.home-assistant.io/t/mmwave-human-presence-for-under-20/414389/111?u=duncanidahoct I set out to turn this into an actual Home Assistant device with multiple sensors to help separate the distinct sections of the Seeed mmWave human presence and disposition functions-into sensor or binary sensor states:
+
+![An Almost Working HA Device...](/static/images/proper%20sensor%20device...%20almost.png)
 
 
-I've updated the code to use MQTT Discovery, so that it will create an actual device with multiple sensors/binary_sensors that will eventually show the various states that are tracked by this sensor:
+
+The code is far from clean at the moment, I also flattened it completely from the source example code on the Seeed Wiki just for simplicity sake while I'm experimenting. And the actual hardware is even uglier than my code, but it works 100%:
+
+![Project Breadboard](/static/images/Seeed%2060Ghz%20mmWave%20-%20ESP32.jpg)
+
+
+
 
 # Why MQTT?
 
@@ -36,9 +45,6 @@ Their code is a bit hard for me to follow, but it hinted at things and I managed
 
 I then added code examples for WiFi and MQTT so I could send sensor data to Home Assistant the only way I knew would work given that I could not manage to get the code to work in ESPHome.
 
-This is what it looks like at the moment, but it works 100%:
-
-![Project Breadboard](/static/images/Seeed%2060Ghz%20mmWave%20-%20ESP32.jpg)
 
 # Integrating into Home Assistant
 
