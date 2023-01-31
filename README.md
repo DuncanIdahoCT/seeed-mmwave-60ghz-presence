@@ -23,7 +23,7 @@ There was a bit of a learning curve for me as this was the first time working wi
 
 Now that the sensors are in and working I started to monitor the state changes and compare this to the original messages from the Seeed Studio Wiki example Arduino sketch:
 
-An excerpt from the full log which can be found [here](static/logbook.txt)!
+An excerpt from the full log (commented) which can be found [here](static/logbook.txt)!
 
 ```
 Presence detected
