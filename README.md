@@ -51,7 +51,7 @@ Status changed to Radar detects no one.
 4:16:01 PM - 6 minutes ago
 ```
 
-# Ready for a Trial Run?
+# Ready for Real-World Testing?
 
 Presence with Motion:
 
