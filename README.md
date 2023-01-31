@@ -17,17 +17,6 @@ Then, and with some helpful tips from Matt over in the HA community forums: http
 
 ![An Almost Working HA Device...](/static/images/proper%20sensor%20device...%20almost.png)
 
-# Why MQTT?
-
-At first I thought to use the sensor with an extra ESP32 I had laying around but as much as I tried to tinker with it, I could not make it work using ESPHome. However, there is an example code set for Arduino IDE... a sample sketch... referenced on the Seeed Studio Wiki:
-
-https://wiki.seeedstudio.com/Radar_MR60FDA1/
-
-https://github.com/limengdu/Seeed-Studio-MR60FDA1-Sersor
-						    ^ <--not a typo, there is a misspelling in the repo name, but hey, I misspelled Seeed when I first wrote this ;)
-
-Their code is a bit hard for me to follow, but it hinted at things and I managed to figure out how to use an ESP32 in Arduino IDE and then worked out that Serial 2 is what I want, not SoftwareSerial as many other threads suggested... the ESP32 has 3 actual hardware serial ports but only Serial 2 is "readily" usable from what I understood. As soon as I modified the code to use Serial 2 and set the pins to my preference the sensor started outputting data to the Arduino IDE serial monitor.
-
 I then added code examples for WiFi and MQTT so I could send sensor data to Home Assistant the only way I knew would work given that I could not manage to get the code to work in ESPHome.
 
 There was a bit of a learning curve for me as this was the first time working with dynamic json documents and the nested objects gave me some grief and kept getting shorted when sent to MQTT as discovery messages but eventually I managed to make it work enough to get a proper device created with sensors and start testing the state messages:
@@ -136,4 +125,15 @@ void MQTT_connect() {
 }
 ```
 
-That's about all for now. If I enhance this further or build an actual case for it, I'll update this project.
+# Why MQTT?
+
+At first I thought to use the sensor with an extra ESP32 I had laying around but as much as I tried to tinker with it, I could not make it work using ESPHome. However, there is an example code set for Arduino IDE... a sample sketch... referenced on the Seeed Studio Wiki:
+
+https://wiki.seeedstudio.com/Radar_MR60FDA1/
+
+https://github.com/limengdu/Seeed-Studio-MR60FDA1-Sersor
+						    ^ <--not a typo, there is a misspelling in the repo name, but hey, I misspelled Seeed when I first wrote this ;)
+
+Their code is a bit hard for me to follow, but it hinted at things and I managed to figure out how to use an ESP32 in Arduino IDE and then worked out that Serial 2 is what I want, not SoftwareSerial as many other threads suggested... the ESP32 has 3 actual hardware serial ports but only Serial 2 is "readily" usable from what I understood. As soon as I modified the code to use Serial 2 and set the pins to my preference the sensor started outputting data to the Arduino IDE serial monitor.
+
+I expect to continue making refinements to this project, I'll likely release them and archive the current working-test version as I go.
