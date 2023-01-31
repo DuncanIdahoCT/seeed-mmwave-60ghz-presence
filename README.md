@@ -21,6 +21,33 @@ There was a bit of a learning curve for me as this was the first time working wi
 
 ![Custom Home Assistant Device](/static/images/custom%20device.png)
 
+Now that the sensors are in and working I started to monitor the state changes and compare this to the original messages from the Seeed Studio Wiki example Arduino sketch:
+
+An excerpt from the full log which can be found [here](static/logbook.txt)!
+
+```
+Presence detected
+4:15:00 PM - 7 minutes ago
+
+Status changed to Radar detects somebody.
+4:15:00 PM - 7 minutes ago
+
+Movement detected
+4:15:00 PM - 7 minutes ago
+
+Status changed to Radar detects somebody in motion.
+4:15:00 PM - 7
+
+Movement cleared (no detected)
+4:15:05 PM - 7 minutes ago
+
+Status changed to Radar detects somebody stationary.
+4:15:05 PM - 7 minutes ago
+
+Presence cleared (no detected)
+4:16:01 PM - 5 minutes ago
+```
+
 
 
 The code is far from clean at the moment, I also flattened it completely from the source example code on the Seeed Wiki just for simplicity sake while I'm experimenting. And the actual hardware is even uglier than my code, but it works 100%:
