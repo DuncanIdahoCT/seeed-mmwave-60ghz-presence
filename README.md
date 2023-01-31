@@ -1,7 +1,9 @@
 # seeed-mmwave-60ghz-presence
 A working MQTT based Home Assistant Integration using the Seeed Studio MR60FDA1
 
+Presence with Motion:
 ![Working Sensor in Action](/static/images/presence+motion.png)
+Stationary Presence:
 ![Working Sensor in Action](/static/images/presence+stationary.png)
 
 # Humble Beginnings
