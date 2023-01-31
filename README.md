@@ -51,12 +51,7 @@ Status changed to Radar detects no one.
 4:16:01 PM - 6 minutes ago
 ```
 
-
-
-The code is far from clean at the moment, I also flattened it completely from the source example code on the Seeed Wiki just for simplicity sake while I'm experimenting. And the actual hardware is even uglier than my code, but it works 100%:
-
-![Project Breadboard](/static/images/Seeed%2060Ghz%20mmWave%20-%20ESP32.jpg)
-
+# Working Device in Home Assistant with Sensors
 
 Presence with Motion:
 
@@ -66,6 +61,9 @@ Stationary Presence:
 
 ![Working Sensor in Action](/static/images/presence+stationary.png)
 
+The code is far from clean at the moment, I also flattened it completely from the source example code on the Seeed Wiki just for simplicity sake while I'm experimenting. And the actual hardware is even uglier than my code, but it works 100%:
+
+![Project Breadboard](/static/images/Seeed%2060Ghz%20mmWave%20-%20ESP32.jpg)
 
 
 # Why MQTT?
