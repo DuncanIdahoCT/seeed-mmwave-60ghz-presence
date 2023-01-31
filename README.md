@@ -51,7 +51,7 @@ Status changed to Radar detects no one.
 4:16:01 PM - 6 minutes ago
 ```
 
-# Working Device in Home Assistant with Sensors
+# Ready for a Trial Run?
 
 Presence with Motion:
 
