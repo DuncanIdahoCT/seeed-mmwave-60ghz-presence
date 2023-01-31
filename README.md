@@ -177,7 +177,7 @@ Their code is a bit hard for me to follow, but it hinted at things and I managed
 
 # Issues / Things to Do:
 
-  1) Work out a better way to set or reset initial states at power on
+  1) Work out a better way to set or reset initial states at power on, right now if there is already presence, it will stay clear until there isn't, and then is again
   2) Once the code can support sending the bytes to the sensor for setting changes such as distance, look into using MQTT command topics to make this possible from the Home Assistant device
   3) Build a case? maybe I'm getting ahead of myself here :) but it would make it easier to hide it in the bedroom for real testing and to see if the cat sets it off as much as the DFRobot 24Ghz mmWave
   4) Code cleansing and deduplication; I got really lazy as I started to see real progress and the project came to life
