@@ -177,7 +177,9 @@ Their code is a bit hard for me to follow, but it hinted at things and I managed
 
   1) Work out a better way to set or reset initial states at power on, right now if there is already presence, it will stay clear until there isn't, and then is again
   2) Once the code can support sending the bytes to the sensor for setting changes such as distance, look into using MQTT command topics to make this possible from the Home Assistant device
-  3) Build a case? maybe I'm getting ahead of myself here :) but it would make it easier to hide it in the bedroom for real testing and to see if the cat sets it off as much as the DFRobot 24Ghz mmWave
-  4) Code cleansing and deduplication; I got really lazy as I started to see real progress and the project came to life
+  3) Investigate why no other bytes that would be handled by the Situation_judgment void function are being sent by the radar module. It's possible I simply have the MR60FDA1 oriented incorrectly in my testing space for it to recognize this human telemetry.
+  4) Fall detection? yeah, I haven't seen any of these bytes either but I'm really not sure how to test this, do I have to bribe someone to actually fall in view, and in range of the sensor? yeah...
+  5) Build a case? maybe I'm getting ahead of myself here :) but it would make it easier to hide it in the bedroom for real testing and to see if the cat sets it off as much as the DFRobot 24Ghz mmWave
+  6) Code cleansing and deduplication; I got really lazy as I started to see real progress and the project came to life
 
 I sat on a small number of these Seeed 60gHz Fall Detection modules for quite some time after initially ordering them with excitement and then realizing I had no idea how to make them work in ESPHome. Once I had the thought to use MQTT, I was able to use the Arduino IDE examples from Seeed as a jumping off point, and then things progressed right along so I expect to continue making refinements to this project, I'll likely release them and archive the current working-test version as I go.
