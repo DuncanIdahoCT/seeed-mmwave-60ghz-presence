@@ -69,7 +69,7 @@ The only thing worse looking than my code, is the actual project board:
 
 ![Project Breadboard](/static/images/Seeed%2060Ghz%20mmWave%20-%20ESP32.jpg)
 
-#Full setup
+# Full setup
 
 I used a random PC cable that happened to have the right size header connection for the back of the MR60FDA1 module and then basically just spliced on some breadboard jumper wire ends so I had the push-in jumper ends basically. Then on my particular MCU which is a Wemos D1 Mini ESP32, I chose to use pins 23,5 for RX,TX of Serail2. Not much else to do here, the MR60FDA1 only needs VCC, GND, RX, and TX. There is no pull-down pin since it's not a simple binary-sensor and there is no separate UART bus either since it already has both RX/TX you just send bytes back if you need to for changing settings, I have not worked that out yet.
 
