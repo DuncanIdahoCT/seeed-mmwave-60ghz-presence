@@ -46,6 +46,9 @@ Status changed to Radar detects somebody stationary.
 
 Presence cleared (no detected)
 4:16:01 PM - 5 minutes ago
+
+Status changed to Radar detects no one.
+4:16:01 PM - 6 minutes ago
 ```
 
 
