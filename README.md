@@ -13,7 +13,7 @@ Next I decided managed to get a basic sensor entity working in Home Assistant us
 
 ![Basic Sensor Entity](/static/images/home%20assistant%20sensor%20entity.png)
 
-Then, and with some helpful tips from Matt over in the HA community forums: https://community.home-assistant.io/t/mmwave-human-presence-for-under-20/414389/111?u=duncanidahoct I set out to turn this into an actual Home Assistant device with multiple sensors to help separate the distinct sections of the Seeed mmWave human presence and disposition functions-into sensor or binary sensor states:
+Then, and with some helpful tips from Matt over in the HA community forums: https://community.home-assistant.io/t/mmwave-human-presence-for-under-20/414389/111 I set out to turn this into an actual Home Assistant device with multiple sensors to help separate the distinct sections of the Seeed mmWave human presence and disposition functions-into sensor or binary sensor states:
 
 ![An Almost Working HA Device...](/static/images/proper%20sensor%20device...%20almost.png)
 
