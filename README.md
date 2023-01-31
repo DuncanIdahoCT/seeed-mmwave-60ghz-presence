@@ -172,7 +172,7 @@ At first I thought to use the sensor with an extra ESP32 I had laying around but
 https://wiki.seeedstudio.com/Radar_MR60FDA1/
 
 https://github.com/limengdu/Seeed-Studio-MR60FDA1-Sersor
-						    ^ <--not a typo, there is a misspelling in the repo name, but hey, I misspelled Seeed when I first wrote this ;)
+						    ^ <--not a typo
 
 Their code is a bit hard for me to follow, but it hinted at things and I managed to figure out how to use an ESP32 in Arduino IDE and then worked out that Serial 2 is what I want, not SoftwareSerial as many other threads suggested... the ESP32 has 3 actual hardware serial ports but only Serial 2 is "readily" usable from what I understood. As soon as I modified the code to use Serial 2 and set the pins to my preference the sensor started outputting data to the Arduino IDE serial monitor.
 
