@@ -4,11 +4,19 @@ A working MQTT based Home Assistant Integration using the Seeed Studio MR60FDA1
 ![Working Sensor in Action](/static/images/presence+motion.png)
 ![Working Sensor in Action](/static/images/presence+stationary.png)
 
-I've updated the code, using MQTT Discovery, so that it will create an actual device with multiple sensors/binary_sensors that will eventually show the various states that are tracked by this sensor:
+# Humble Beginnings
 
-![Proper Sensor dDevice... almost](/static/images/proper%20sensor%20device...%20almost.png)
+I started out just being able to see the sensor messages in Arduino IDE, and I only had an ESP32 to use as the MCU so it took a bit of tinkering to even get started:
 
-This has a dependancy on ArduinoJson so you may need to add that library...
+![Arduino IDE](/static/images/Arduino%20IDE.png)
+
+Next I decided to try to get a basic sensor entity working in Home Assistant using manual configuration.yaml sensor settings with a state topic I could update using messages from the sensor example code:
+
+![Basic Sensor Entity](/static/images/home%20assistant%20sensor%20entity.png)
+
+
+
+I've updated the code to use MQTT Discovery, so that it will create an actual device with multiple sensors/binary_sensors that will eventually show the various states that are tracked by this sensor:
 
 # Why MQTT?
 
