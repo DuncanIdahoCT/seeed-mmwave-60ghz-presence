@@ -61,7 +61,9 @@ Stationary Presence:
 
 ![Working Sensor in Action](/static/images/presence+stationary.png)
 
-The code is far from clean at the moment, I also flattened it completely from the source example code on the Seeed Wiki just for simplicity sake while I'm experimenting. And the actual hardware is even uglier than my code, but it works 100%:
+The code is far from clean at the moment, I also flattened it completely-making it all in one .ino compared to the source example code on the Seeed Wiki... just for simplicity sake... while I'm experimenting.
+
+The only thing worse looking than my code, is the actual project board:
 
 ![Project Breadboard](/static/images/Seeed%2060Ghz%20mmWave%20-%20ESP32.jpg)
 
