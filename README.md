@@ -1,7 +1,8 @@
 # seeed-mmwave-60ghz-presence
 A working MQTT based Home Assistant Integration using the Seeed Studio MR60FDA1
 
-![Arduino IDE](/static/images/Arduino%20IDE.png)
+![Working Sensor in Action](/static/images/presence+motion.png)
+![Working Sensor in Action](/static/images/presence+stationary.png)
 
 I've updated the code, using MQTT Discovery, so that it will create an actual device with multiple sensors/binary_sensors that will eventually show the various states that are tracked by this sensor:
 
