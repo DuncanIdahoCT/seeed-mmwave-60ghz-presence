@@ -9,13 +9,26 @@ I started out just being able to see the sensor messages in Arduino IDE, and I o
 
 ![Arduino IDE](/static/images/Arduino%20IDE.png)
 
-Next I decided managed to get a basic sensor entity working in Home Assistant using manual configuration.yaml sensor settings with a state topic I could update using messages from the sensor example code:
+Next I decided to use MQTT to get a basic sensor entity working in Home Assistant using manual configuration.yaml sensor settings with a state topic I could update using messages from the sensor example code:
 
 ![Basic Sensor Entity](/static/images/home%20assistant%20sensor%20entity.png)
 
 Then, and with some helpful tips from Matt over in the HA community forums: https://community.home-assistant.io/t/mmwave-human-presence-for-under-20/414389/111 I set out to turn this into an actual Home Assistant device with multiple sensors to help separate the distinct sections of the Seeed mmWave human presence and disposition functions-into sensor or binary sensor states:
 
 ![An Almost Working HA Device...](/static/images/proper%20sensor%20device...%20almost.png)
+
+# Why MQTT?
+
+At first I thought to use the sensor with an extra ESP32 I had laying around but as much as I tried to tinker with it, I could not make it work using ESPHome. However, there is an example code set for Arduino IDE... a sample sketch... referenced on the Seeed Studio Wiki:
+
+https://wiki.seeedstudio.com/Radar_MR60FDA1/
+
+https://github.com/limengdu/Seeed-Studio-MR60FDA1-Sersor
+						    ^ <--not a typo, there is a misspelling in the repo name, but hey, I misspelled Seeed when I first wrote this ;)
+
+Their code is a bit hard for me to follow, but it hinted at things and I managed to figure out how to use an ESP32 in Arduino IDE and then worked out that Serial 2 is what I want, not SoftwareSerial as many other threads suggested... the ESP32 has 3 actual hardware serial ports but only Serial 2 is "readily" usable from what I understood. As soon as I modified the code to use Serial 2 and set the pins to my preference the sensor started outputting data to the Arduino IDE serial monitor.
+
+I then added code examples for WiFi and MQTT so I could send sensor data to Home Assistant the only way I knew would work given that I could not manage to get the code to work in ESPHome.
 
 There was a bit of a learning curve for me as this was the first time working with dynamic json documents and the nested objects gave me some grief and kept getting shorted when sent to MQTT as discovery messages but eventually I managed to make it work enough to get a proper device created with sensors and start testing the state messages:
 
@@ -66,21 +79,6 @@ The code is far from clean at the moment, I also flattened it completely-making 
 The only thing worse looking than my code, is the actual project board:
 
 ![Project Breadboard](/static/images/Seeed%2060Ghz%20mmWave%20-%20ESP32.jpg)
-
-
-# Why MQTT?
-
-At first I thought to use the sensor with an extra ESP32 I had laying around but as much as I tried to tinker with it, I could not make it work using ESPHome. However, there is an example code set for Arduino IDE... a sample sketch... referenced on the Seeed Studio Wiki:
-
-https://wiki.seeedstudio.com/Radar_MR60FDA1/
-
-https://github.com/limengdu/Seeed-Studio-MR60FDA1-Sersor
-						    ^ <--not a typo, there is a misspelling in the repo name, but hey, I misspelled Seeed when I first wrote this ;)
-
-Their code is a bit hard for me to follow, but it hinted at things and I managed to figure out how to use an ESP32 in Arduino IDE and then worked out that Serial 2 is what I want, not SoftwareSerial as many other threads suggested... the ESP32 has 3 actual hardware serial ports but only Serial 2 is "readily" usable from what I understood. As soon as I modified the code to use Serial 2 and set the pins to my preference the sensor started outputting data to the Arduino IDE serial monitor.
-
-I then added code examples for WiFi and MQTT so I could send sensor data to Home Assistant the only way I knew would work given that I could not manage to get the code to work in ESPHome.
-
 
 # Integrating into Home Assistant
 
