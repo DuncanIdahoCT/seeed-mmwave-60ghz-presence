@@ -450,6 +450,7 @@ void MQTT_connect() {
   // This part below is meant to "initialize" the sensors in Home Assistant so that they aren't showing Unknown upon creation or update of the sketch to the MCU
   // However, it's not necessary and causes a minor issue where if the sensor is detecting human presence when you update the sketch or if the MQTT host is found to need reconnection...
   // The below code will reset the presence binary_sensor to Clear even though it's Detected and that won't change again until the state from the actual sensor does
+  // A much easier solution would be to simply reset the radar module upgon void setup, but I can't yet work out why the radar module seems to be ignoring any writes...
   // A minor issue but I'll work out a better way at some point... or this code can just be removed as it's really not needed.
   String status;
   String presence;
