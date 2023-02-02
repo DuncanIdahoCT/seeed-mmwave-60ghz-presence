@@ -68,9 +68,9 @@ class FallDetection_60GHz{
 // MQTT vars
 const char broker[] = "xxx.xxx.xxx.xxx";
 int        port     = 1883;
-const char statustopic[]  = "homeassistant/sensor/seed-mmwave_status/state";
-const char presencetopic[]  = "homeassistant/binary_sensor/seed-mmwave_presence/state";
-const char movementtopic[]  = "homeassistant/binary_sensor/seed-mmwave_movement/state";
+const char statustopic[]  = "homeassistant/sensor/seeed-mmwave_status/state";
+const char presencetopic[]  = "homeassistant/binary_sensor/seeed-mmwave_presence/state";
+const char movementtopic[]  = "homeassistant/binary_sensor/seeed-mmwave_movement/state";
 
 WiFiClient wifiClient;
 MqttClient mqttClient(wifiClient);
@@ -100,7 +100,7 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   // I'm not sure if this is requied but I set a unique client ID while debugging MQTT authentication:
-  mqttClient.setId("seed-mmwave");
+  mqttClient.setId("seeed-mmwave");
 
   // Despite the Mosquito docs, I was not able to use my Home Assistant username and password here, the host tosses up some invalid key error.
   // However, there was one I used, that I can't even recall how it was generated, for another MQTT client solution which has a long key instead of an HA password
@@ -386,9 +386,9 @@ void MQTT_connect() {
   
   DynamicJsonDocument config(512);
   config["name"] = "Status";
-  config["object_id"] = "seed-mmwave_status";
+  config["object_id"] = "seeed-mmwave_status";
   config["unique_id"] = "your_unique_id_here... I used a GUID";
-  config["state_topic"] = "homeassistant/sensor/seed-mmwave_status/state";
+  config["state_topic"] = "homeassistant/sensor/seeed-mmwave_status/state";
   JsonObject device  = config.createNestedObject("device");
   device["identifiers"] = "Custom";
   device["name"] = "Seeed mmWave";
@@ -398,16 +398,16 @@ void MQTT_connect() {
 
   serializeJsonPretty(config, Serial);
 
-  mqttClient.beginMessage("homeassistant/sensor/seed-mmwave_status/config", (unsigned long)measureJson(config));
+  mqttClient.beginMessage("homeassistant/sensor/seeed-mmwave_status/config", (unsigned long)measureJson(config));
   serializeJson(config, mqttClient);
   mqttClient.endMessage();
 
   DynamicJsonDocument config1(512);
   config1["device_class"] = "Occupancy";
   config1["name"] = "Presence";
-  config1["object_id"] = "seed-mmwave_presence";
+  config1["object_id"] = "seeed-mmwave_presence";
   config1["unique_id"] = "your_unique_id_here... I used a GUID";
-  config1["state_topic"] = "homeassistant/binary_sensor/seed-mmwave_presence/state";
+  config1["state_topic"] = "homeassistant/binary_sensor/seeed-mmwave_presence/state";
   config1["payload_on"] = "on";
   config1["payload_off"] = "off";
   JsonObject device1  = config1.createNestedObject("device");
@@ -419,16 +419,16 @@ void MQTT_connect() {
 
   serializeJsonPretty(config1, Serial);
 
-  mqttClient.beginMessage("homeassistant/binary_sensor/seed-mmwave_presence/config", (unsigned long)measureJson(config1));
+  mqttClient.beginMessage("homeassistant/binary_sensor/seeed-mmwave_presence/config", (unsigned long)measureJson(config1));
   serializeJson(config1, mqttClient);
   mqttClient.endMessage();
 
   DynamicJsonDocument config2(512);
   config2["device_class"] = "motion";
   config2["name"] = "Movement";
-  config2["object_id"] = "seed-mmwave_movement";
+  config2["object_id"] = "seeed-mmwave_movement";
   config2["unique_id"] = "your_unique_id_here... I used a GUID";
-  config2["state_topic"] = "homeassistant/binary_sensor/seed-mmwave_movement/state";
+  config2["state_topic"] = "homeassistant/binary_sensor/seeed-mmwave_movement/state";
   config2["payload_on"] = "on";
   config2["payload_off"] = "off";
   JsonObject device2  = config2.createNestedObject("device");
@@ -440,7 +440,7 @@ void MQTT_connect() {
 
   serializeJsonPretty(config2, Serial);
 
-  mqttClient.beginMessage("homeassistant/binary_sensor/seed-mmwave_movement/config", (unsigned long)measureJson(config2));
+  mqttClient.beginMessage("homeassistant/binary_sensor/seeed-mmwave_movement/config", (unsigned long)measureJson(config2));
   serializeJson(config2, mqttClient);
   mqttClient.endMessage();
 
