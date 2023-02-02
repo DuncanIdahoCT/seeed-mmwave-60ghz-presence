@@ -68,7 +68,9 @@ class FallDetection_60GHz{
 // MQTT vars
 const char broker[] = "xxx.xxx.xxx.xxx";
 int        port     = 1883;
-const char topic[]  = "homeassistant/sensor/seed-mmwave_status/state";
+const char statustopic[]  = "homeassistant/sensor/seed-mmwave_status/state";
+const char presencetopic[]  = "homeassistant/binary_sensor/seed-mmwave_presence/state";
+const char movementtopic[]  = "homeassistant/binary_sensor/seed-mmwave_movement/state";
 
 WiFiClient wifiClient;
 MqttClient mqttClient(wifiClient);
@@ -119,7 +121,8 @@ void loop() {
     dataMsg[radar.dataLen+2] = 0x43;
     radar.newData = false;                     //A complete set of data frames is saved
     
-    //radar.ShowData(dataMsg);                 //Serial port prints a set of received data frames
+    //radar.ShowData(dataMsg);                 //This would show the entire HEX frame message from the radar module for debug purposes only
+
     radar.Situation_judgment(dataMsg);         //Use radar built-in algorithm to output human motion status
   }
 }
@@ -134,7 +137,6 @@ void FallDetection_60GHz::SerialInit(){
   Serial.println("mmWave Serial Txd is on pin: "+String(TXD2));
   Serial.println("mmWave Serial Rxd is on pin: "+String(RXD2));
   Serial.println("mmWave Serial Ready");
-
 }
 
 // Receive data and process
@@ -176,9 +178,13 @@ void FallDetection_60GHz::ShowData(byte inf[]){
 }
 
 // Judgment of occupied and unoccupied, approach and distance
+// For simplicity, I've blended in the MQTT state topic messages below for the presence and motion states
+// Including sending the latest state change message, of any case, to the status state topic
 void FallDetection_60GHz::Situation_judgment(byte inf[]){
 
-    String payload;
+    String status;
+    String presence;
+    String movement;
 
     bool retained = true;
     int qos = 1;
@@ -191,15 +197,27 @@ void FallDetection_60GHz::Situation_judgment(byte inf[]){
           switch(inf[6]){
             case NOONE_HERE:
               ShowData(inf);
-              payload += "Radar detects no one.";
-              Serial.println(payload);
+              status += "Radar detects no one.";
+              Serial.println(status);
               Serial.println("----------------------------");
+
+              presence = "off";
+              mqttClient.beginMessage(presencetopic, presence.length(), retained, qos, dup);
+              mqttClient.print(presence);
+              mqttClient.endMessage();
+
               break;
             case SOMEONE_HERE:
               ShowData(inf);
-              payload += "Radar detects somebody.";
-              Serial.println(payload);
+              status += "Radar detects somebody.";
+              Serial.println(status);
               Serial.println("----------------------------");
+
+              presence = "on";
+              mqttClient.beginMessage(presencetopic, presence.length(), retained, qos, dup);
+              mqttClient.print(presence);
+              mqttClient.endMessage();
+
               break;
           }
           break;
@@ -207,35 +225,47 @@ void FallDetection_60GHz::Situation_judgment(byte inf[]){
           switch(inf[6]){
             case NONE:
               ShowData(inf);
-              payload += "Radar detects None.";
-              Serial.println(payload);
+              status += "Radar detects None.";
+              Serial.println(status);
               Serial.println("----------------------------");
               break;
             case STATIONARY:
               ShowData(inf);
-              payload += "Radar detects somebody stationary.";
-              Serial.println(payload);
+              status += "Radar detects somebody stationary.";
+              Serial.println(status);
               Serial.println("----------------------------");
+
+              movement = "off";
+              mqttClient.beginMessage(movementtopic, movement.length(), retained, qos, dup);
+              mqttClient.print(movement);
+              mqttClient.endMessage();
+
               break;
             case MOVEMENT:
               ShowData(inf);
-              payload += "Radar detects somebody in motion.";
-              Serial.println(payload);
+              status += "Radar detects somebody in motion.";
+              Serial.println(status);
               Serial.println("----------------------------");
+
+              movement = "on";
+              mqttClient.beginMessage(movementtopic, movement.length(), retained, qos, dup);
+              mqttClient.print(movement);
+              mqttClient.endMessage();
+
               break;
           }
           break;
         case BODY_SIG:
           ShowData(inf);
-          payload += "The radar identifies the current motion feature value is: ";
-          Serial.println(payload);
+          status += "The radar identifies the current motion feature value is: ";
+          Serial.println(status);
           Serial.println(inf[6]);
           Serial.println("----------------------------");
           break;
         case DISTANCE:
           ShowData(inf);
-          payload += "The distance of the radar from the monitored person is: ";
-          Serial.println(payload);
+          status += "The distance of the radar from the monitored person is: ";
+          Serial.println(status);
           Serial.print(inf[6]);
           Serial.print(" ");
           Serial.print(inf[7]);
@@ -244,8 +274,8 @@ void FallDetection_60GHz::Situation_judgment(byte inf[]){
           break;
         case MOVESPEED:
           ShowData(inf);
-          payload += "The speed of movement of the monitored person is: ";
-          Serial.println(payload);
+          status += "The speed of movement of the monitored person is: ";
+          Serial.println(status);
           Serial.print(inf[6]);
           Serial.print(" ");
           Serial.print(inf[7]);
@@ -256,20 +286,17 @@ void FallDetection_60GHz::Situation_judgment(byte inf[]){
       break;
   }
 
-    // It's a bit messy, but this is where the actual MQTT messages, which are defined above as (payload) are sent to the MQTT host
-    // I plan to break these out into their proper binary_sensors leaving only the top level status being sent to the base topic
-    Serial.print("Sending message to topic: ");
-    Serial.println(topic);
-    Serial.println(payload);
-    mqttClient.beginMessage(topic, payload.length(), retained, qos, dup);
-    mqttClient.print(payload);
+    Serial.print("Sending latest message to sensor status state topic: ");
+    Serial.println(statustopic);
+    Serial.println(status);
+    mqttClient.beginMessage(statustopic, status.length(), retained, qos, dup);
+    mqttClient.print(status);
     mqttClient.endMessage();
 
     Serial.println();
-
 }
 
-//Respiratory sleep data frame decoding
+//Fall detection data frame decoding
 void FallDetection_60GHz::Fall_Detection(byte inf[]){
   switch(inf[2]){
     case FALL_DETECTION:
@@ -333,13 +360,12 @@ void FallDetection_60GHz::Fall_Detection(byte inf[]){
     // Even though this is the "Fall Detection" radar module, I'm not using, nor have I seen, any of these messages
     // Some things aren't yet implimented if you read the Seeed documentation but honestly I problably won't use this anyway
     // For this reason, I don't have any MQTT topic or state related code here
-		  
+  
   }
 }
 
 // This function connects or reconnects the MQTT client, I found this solution better than doing an endless polling loop
 // And I'm sure it's much easier on the CPU of the poor ESP32 I'm using :)
-
 void MQTT_connect() {
   if (mqttClient.connected()) {
     return;
@@ -382,6 +408,8 @@ void MQTT_connect() {
   config1["object_id"] = "seed-mmwave_presence";
   config1["unique_id"] = "your_unique_id_here... I used a GUID";
   config1["state_topic"] = "homeassistant/binary_sensor/seed-mmwave_presence/state";
+  config1["payload_on"] = "on";
+  config1["payload_off"] = "off";
   JsonObject device1  = config1.createNestedObject("device");
   device1["identifiers"] = "Custom";
   device1["name"] = "Seeed mmWave";
@@ -401,6 +429,8 @@ void MQTT_connect() {
   config2["object_id"] = "seed-mmwave_movement";
   config2["unique_id"] = "your_unique_id_here... I used a GUID";
   config2["state_topic"] = "homeassistant/binary_sensor/seed-mmwave_movement/state";
+  config2["payload_on"] = "on";
+  config2["payload_off"] = "off";
   JsonObject device2  = config2.createNestedObject("device");
   device2["identifiers"] = "Custom";
   device2["name"] = "Seeed mmWave";
@@ -416,4 +446,32 @@ void MQTT_connect() {
 
   // I'm not entirely sure how the above triple json docs effect memory on the Arduino(ESP32 in my case) but this does work for now.
   // As is my MO with code I tinker with, this just has to be a far more repetitive way of doing things than is necessary... but I have other priorities!
+
+  // This part below is meant to "initialize" the sensors in Home Assistant so that they aren't showing Unknown upon creation or update of the sketch to the MCU
+  // However, it's not necessary and causes a minor issue where if the sensor is detecting human presence when you update the sketch or if the MQTT host is found to need reconnection...
+  // The below code will reset the presence binary_sensor to Clear even though it's Detected and that won't change again until the state from the actual sensor does
+  // A minor issue but I'll work out a better way at some point... or this code can just be removed as it's really not needed.
+  String status;
+  String presence;
+  String movement;
+
+  bool retained = true;
+  int qos = 1;
+  bool dup = false;
+
+  presence = "off";
+  mqttClient.beginMessage(presencetopic, presence.length(), retained, qos, dup);
+  mqttClient.print(presence);
+  mqttClient.endMessage();
+
+  movement = "off";
+  mqttClient.beginMessage(movementtopic, movement.length(), retained, qos, dup);
+  mqttClient.print(movement);
+  mqttClient.endMessage();
+
+  status = "Radar detects no one.";
+  mqttClient.beginMessage(statustopic, status.length(), retained, qos, dup);
+  mqttClient.print(status);
+  mqttClient.endMessage();
+
 }
