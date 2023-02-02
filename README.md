@@ -3,6 +3,8 @@ A working MQTT based Home Assistant Integration using the Seeed Studio MR60FDA1
 
 ![Device with Sensors](/static/images/device%20with%20sensors.png)
 
+Some comments and data on most recent test results can be found [here](Non-human%20Detection%20Results.md)!
+
 # Humble Beginnings
 
 I started out just being able to see the sensor messages in Arduino IDE, and I only had an ESP32 to use as the MCU so it took a bit of tinkering to even get started:
